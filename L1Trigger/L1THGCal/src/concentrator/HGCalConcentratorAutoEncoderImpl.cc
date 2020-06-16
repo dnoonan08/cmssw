@@ -14,7 +14,8 @@ HGCalConcentratorAutoEncoderImpl::HGCalConcentratorAutoEncoderImpl(const edm::Pa
 }
 
 void HGCalConcentratorAutoEncoderImpl::select(const std::vector<l1t::HGCalTriggerCell>& trigCellVecInput,
-					      std::vector<l1t::HGCalTriggerCell>& trigCellVecOutput){
+					      std::vector<l1t::HGCalTriggerCell>& trigCellVecOutput,
+					      std::vector<l1t::HGCalConcentratorData>& ae_encodedLayer_Output){
 
   //initialize as all zeros, since trigCellVecInput is zero suppressed
   double ae_inputArray[3][48] = {{0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
@@ -56,71 +57,83 @@ void HGCalConcentratorAutoEncoderImpl::select(const std::vector<l1t::HGCalTrigge
   
 
   if (modSum>0){
-    for (int i=0; i<48; i++) ae_inputArray[0][i] /= modSum;
+    //normalize inputs to module sum
+    for (int i=0; i<48; i++) {
+      ae_inputArray[0][i] = ae_inputArray[0][i]/modSum;
+    }
   }
-
 
   // INSERT AUTO ENCODER AND DECODER
   // for now, just copy input array mipPt into output
+  int ae_encodedLayer[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+
   double ae_outputArray[48];
   for (int i=0; i<48; i++) ae_outputArray[i] = ae_inputArray[0][i];
 
-  
   // Add data back into trigger cells
   if (modSum>0){
-      //get detID for everything but cell, take first entry detID and subtract off cellU and cellV contribution
-      HGCalTriggerDetId id(trigCellVecInput.at(0).detId());
-      int cellU_ = id.triggerCellU();
-      int cellV_ = id.triggerCellV();
-      int _id_waferBase = trigCellVecInput.at(0).detId() - (cellU_ << HGCalTriggerDetId::kHGCalCellUOffset) - (cellV_ << HGCalTriggerDetId::kHGCalCellVOffset);
+    //get detID for everything but cell, take first entry detID and subtract off cellU and cellV contribution
+    HGCalTriggerDetId id(trigCellVecInput.at(0).detId());
+    int cellU_ = id.triggerCellU();
+    int cellV_ = id.triggerCellV();
+    unsigned _id_waferBase = trigCellVecInput.at(0).detId() - (cellU_ << HGCalTriggerDetId::kHGCalCellUOffset) - (cellV_ << HGCalTriggerDetId::kHGCalCellVOffset);
+    
+    //use first TC to find mipPt conversions to Et and ADC
+    float mipPtToEt_conv = trigCellVecInput.at(0).et() / trigCellVecInput.at(0).mipPt();
+    float mipPtToADC_conv = trigCellVecInput.at(0).hwPt() / trigCellVecInput.at(0).mipPt();
+    
+    for (int i=0; i<48; i++){
+      if (ae_outputArray[i] > 0){
+	cellU_ = ae_outputCellU_[i];
+	cellV_ = ae_outputCellV_[i];
 
-      //use first TC to find mipPt conversions to Et and ADC
-      float mipPtToEt_conv = trigCellVecInput.at(0).et() / trigCellVecInput.at(0).mipPt();
-      float mipPtToADC_conv = trigCellVecInput.at(0).hwPt() / trigCellVecInput.at(0).mipPt();
-
-      for (int i=0; i<48; i++){
-	if (ae_outputArray[i] > 0){
-	  cellU_ = ae_outputCellU_[i];
-	  cellV_ = ae_outputCellV_[i];
-
-	  //find detID for this cell
-	  int detID = _id_waferBase + (cellU_ << HGCalTriggerDetId::kHGCalCellUOffset) + (cellV_ << HGCalTriggerDetId::kHGCalCellVOffset);
+	//find detID for this cell
+	unsigned detID = _id_waferBase + (cellU_ << HGCalTriggerDetId::kHGCalCellUOffset) + (cellV_ << HGCalTriggerDetId::kHGCalCellVOffset);
 	  
-	  double mipPt = ae_outputArray[i]*modSum;
-	  double ADC = mipPt*mipPtToADC_conv;
-	  double Et = mipPt*mipPtToEt_conv;
-
-	  l1t::HGCalTriggerCell triggerCell(reco::LeafCandidate::LorentzVector(), ADC, 0, 0, 0, detID);
-
-	  //Keep the pre-autoencoder charge for this cell
-	  triggerCell.setUncompressedCharge(ae_inputArray[1][i]);
-	  triggerCell.setCompressedCharge(ae_inputArray[2][i]);
-	  triggerCell.setMipPt(mipPt);
-
-	  GlobalPoint point = triggerTools_.getTCPosition(detID);
-
-	  math::PtEtaPhiMLorentzVector p4(Et, point.eta(), point.phi(), 0.);
-
-	  triggerCell.setP4(p4);
-	  triggerCell.setPosition(point);
-
-	  trigCellVecOutput.push_back(triggerCell);
-	}
+	double mipPt = ae_outputArray[i]*modSum;
+	double ADC = mipPt*mipPtToADC_conv;
+	double Et = mipPt*mipPtToEt_conv;
+	
+	l1t::HGCalTriggerCell triggerCell(reco::LeafCandidate::LorentzVector(), ADC, 0, 0, 0, detID);
+	//Keep the pre-autoencoder charge for this cell
+	triggerCell.setUncompressedCharge(ae_inputArray[1][i]);
+	triggerCell.setCompressedCharge(ae_inputArray[2][i]);
+	triggerCell.setMipPt(mipPt);
+	
+	GlobalPoint point = triggerTools_.getTCPosition(detID);
+	
+	math::PtEtaPhiMLorentzVector p4(Et, point.eta(), point.phi(), 0.);
+	
+	triggerCell.setP4(p4);
+	triggerCell.setPosition(point);
+	
+	trigCellVecOutput.push_back(triggerCell);
       }
+    }
+    
+    // load encoded layer data into a dummy trigger cell object, 
+    // this is a convenient way to store module information, and pass to ntuplizer
+    for (int i=0; i<16; i++){
+      l1t::HGCalConcentratorData encodedLayerData(reco::LeafCandidate::LorentzVector(), ae_encodedLayer[i], 0, 0, 0, _id_waferBase);
+      encodedLayerData.setIndex(i);
+      ae_encodedLayer_Output.push_back(encodedLayerData);
 
+      if (printWafer) {
+	cout << encodedLayerData.hwPt() << ", ";
+      }
+    }
+    if (printWafer) {
+	cout << endl;
+    }
   }
-  // for (const auto& aeValue : ae_inputArray){
-
 
   // temporary dump of single module data
   if (printWafer) {
+      cout << "------------" << endl;
     for (const auto& aeValue : ae_inputArray[0]){
       cout << aeValue << ", ";
     }
     cout << endl;
   }
-
-
-
 
 }

@@ -3,6 +3,7 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/L1THGCal/interface/HGCalTriggerCell.h"
+#include "DataFormats/L1THGCal/interface/HGCalConcentratorData.h"
 #include "L1Trigger/L1THGCal/interface/HGCalTriggerTools.h"
 #include <vector>
 
@@ -13,12 +14,15 @@ public:
   HGCalConcentratorAutoEncoderImpl(const edm::ParameterSet& conf);
 
   void select(const std::vector<l1t::HGCalTriggerCell>& trigCellVecInput,
-              std::vector<l1t::HGCalTriggerCell>& trigCellVecOutput);
+              std::vector<l1t::HGCalTriggerCell>& trigCellVecOutput,
+	      std::vector<l1t::HGCalConcentratorData>& ae_EncodedOutput);
 
   void eventSetup(const edm::EventSetup& es) { triggerTools_.eventSetup(es); }
 
 private:
   std::vector<int> cellRemap_;
+  unsigned nBitsInputPrecision_;
+  unsigned nBitsOutputPrecision_;
 
   int ae_outputCellU_[48];
   int ae_outputCellV_[48];

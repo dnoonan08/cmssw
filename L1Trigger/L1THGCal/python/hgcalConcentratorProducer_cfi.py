@@ -141,21 +141,21 @@ coarsetc_equalshare_proc = cms.PSet(ProcessorName  = cms.string('HGCalConcentrat
 )
 
 
-triggerCellRemap_v11 = [47, 44, 41, 38, -1, -1, -1, -1,  
-                        1, 35, 32, 29, 26, -1, -1, -1, 
-                        13,  4, 23, 20, 17, 14, -1, -1, 
-                        25, 16,  7, 11,  8,  5,  2, -1,
-                        37, 28, 19, 10,  9, 21, 33, 45,
-                        -1, 40, 31, 22,  6, 18, 30, 42,
-                        -1, -1, 43, 34,  3, 15, 27, 39,
-                        -1, -1, -1, 46,  0, 12, 24, 36]
+autoencoded_triggerCellRemap_v11 = [47, 44, 41, 38, -1, -1, -1, -1,  
+                                    1, 35, 32, 29, 26, -1, -1, -1, 
+                                    13,  4, 23, 20, 17, 14, -1, -1, 
+                                    25, 16,  7, 11,  8,  5,  2, -1,
+                                    37, 28, 19, 10,  9, 21, 33, 45,
+                                    -1, 40, 31, 22,  6, 18, 30, 42,
+                                    -1, -1, 43, 34,  3, 15, 27, 39,
+                                    -1, -1, -1, 46,  0, 12, 24, 36]
 
 
 autoEncoder_conc_proc = cms.PSet(ProcessorName  = cms.string('HGCalConcentratorProcessorSelection'),
                                  Method = cms.vstring(['autoEncoder']*3),
                                  threshold_silicon = cms.double(2.), # MipT
                                  threshold_scintillator = cms.double(2.), # MipT
-                                 cellRemap = cms.vint32(triggerCellRemap_v11),
+                                 cellRemap = cms.vint32(autoencoded_triggerCellRemap_v11),
                                  coarsenTriggerCells = cms.vuint32(0,0,0),
                                  fixedDataSizePerHGCROC = cms.bool(False),
                                  ctcSize = cms.vuint32(CTC_SIZE),

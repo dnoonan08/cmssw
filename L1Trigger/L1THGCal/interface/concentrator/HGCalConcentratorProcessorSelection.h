@@ -12,8 +12,10 @@
 #include "L1Trigger/L1THGCal/interface/HGCalTriggerTools.h"
 #include "DataFormats/L1THGCal/interface/HGCalTriggerCell.h"
 #include "DataFormats/L1THGCal/interface/HGCalTriggerSums.h"
+#include "DataFormats/L1THGCal/interface/HGCalConcentratorData.h"
 
 #include <utility>
+#include <tuple>
 
 class HGCalConcentratorProcessorSelection : public HGCalConcentratorProcessorBase {
 private:
@@ -23,8 +25,9 @@ public:
   HGCalConcentratorProcessorSelection(const edm::ParameterSet& conf);
 
   void run(const edm::Handle<l1t::HGCalTriggerCellBxCollection>& triggerCellCollInput,
-           std::pair<l1t::HGCalTriggerCellBxCollection, l1t::HGCalTriggerSumsBxCollection>& triggerCollOutput,
-           const edm::EventSetup& es) override;
+           std::tuple<l1t::HGCalTriggerCellBxCollection, l1t::HGCalTriggerSumsBxCollection, l1t::HGCalConcentratorDataBxCollection>& triggerCollOutput,
+           /* std::pair<l1t::HGCalTriggerCellBxCollection, l1t::HGCalTriggerSumsBxCollection>& triggerCollOutput, */
+           const edm::EventSetup& es) ;
 
 private:
   bool fixedDataSizePerHGCROC_;

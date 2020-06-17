@@ -67,7 +67,6 @@ void HGCalConcentratorProducer::produce(edm::Event& e, const edm::EventSetup& es
   // Put in the event
   e.put(std::make_unique<l1t::HGCalTriggerCellBxCollection>(std::move(std::get<0>(cc_output))), concentratorProcess_->name());
   e.put(std::make_unique<l1t::HGCalTriggerSumsBxCollection>(std::move(std::get<1>(cc_output))), concentratorProcess_->name());
-  cout << std::get<2>(cc_output).size() << endl;
   e.put(std::make_unique<l1t::HGCalConcentratorDataBxCollection>(std::move(std::get<2>(cc_output))), concentratorProcess_->name());
   // e.put(std::make_unique<l1t::HGCalTriggerCellBxCollection>(std::move(cc_output.first)), concentratorProcess_->name());
   // e.put(std::make_unique<l1t::HGCalTriggerSumsBxCollection>(std::move(cc_output.second)), concentratorProcess_->name());

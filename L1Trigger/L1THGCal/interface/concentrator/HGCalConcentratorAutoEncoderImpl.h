@@ -13,7 +13,8 @@ class HGCalConcentratorAutoEncoderImpl {
 public:
   HGCalConcentratorAutoEncoderImpl(const edm::ParameterSet& conf);
 
-  void select(const std::vector<l1t::HGCalTriggerCell>& trigCellVecInput,
+  void select(unsigned nLinks,
+	      const std::vector<l1t::HGCalTriggerCell>& trigCellVecInput,
               std::vector<l1t::HGCalTriggerCell>& trigCellVecOutput,
 	      std::vector<l1t::HGCalConcentratorData>& ae_EncodedOutput);
 
@@ -21,8 +22,9 @@ public:
 
 private:
   std::vector<int> cellRemap_;
-  unsigned nBitsInputPrecision_;
-  unsigned nBitsOutputPrecision_;
+  int bitsPerInput_;
+  int maxBitsPerOutput_;
+  std::vector<int> outputBitsPerLink_;
 
   int ae_outputCellU_[48];
   int ae_outputCellV_[48];

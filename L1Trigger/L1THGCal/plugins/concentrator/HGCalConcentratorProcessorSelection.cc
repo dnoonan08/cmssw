@@ -121,7 +121,10 @@ void HGCalConcentratorProcessorSelection::run(
           superTriggerCellImpl_->select(trigCellVecCoarsened, trigCellVecOutput);
           break;
         case autoEncoderSelect:
-	  autoEncoderImpl_->select(trigCellVecCoarsened, trigCellVecOutput, ae_EncodedLayerOutput);
+	  autoEncoderImpl_->select(geometry_->getLinksInModule(module_trigcell.first),
+				   trigCellVecCoarsened,
+				   trigCellVecOutput,
+				   ae_EncodedLayerOutput);
           break;
         case noSelection:
           trigCellVecOutput = trigCellVecCoarsened;
@@ -147,7 +150,10 @@ void HGCalConcentratorProcessorSelection::run(
           superTriggerCellImpl_->select(module_trigcell.second, trigCellVecOutput);
           break;
         case autoEncoderSelect:
-	  autoEncoderImpl_->select(module_trigcell.second, trigCellVecOutput, ae_EncodedLayerOutput);
+	  autoEncoderImpl_->select(geometry_->getLinksInModule(module_trigcell.first),
+				   module_trigcell.second,
+				   trigCellVecOutput,
+				   ae_EncodedLayerOutput);
           break;
         case noSelection:
           trigCellVecOutput = module_trigcell.second;

@@ -36,10 +36,6 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/cmst3/group/hgcal/CMG_studies/Production/ttbar_ttbar_v11_aged_unbiased_20191101/GSD/physprocttbar_x100_ttbar-1.0To-1.0_GSD_%i.root'%options.job),
-
-
-#       fileNames = cms.untracked.vstring('file:physprocttbar_x100_ttbar-1.0To-1.0_GSD_2.root'),
-#       skipEvents=cms.untracked.uint32(),
        inputCommands=cms.untracked.vstring(
            'keep *',
            'drop l1tEMTFHit2016Extras_simEmtfDigis_CSC_HLT',
@@ -79,12 +75,19 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 # load HGCAL TPG simulation
 process.load('L1Trigger.L1THGCal.hgcalTriggerPrimitives_cff')
 
-#process.hgcalConcentratorProducer.ProcessorParameters.Method=cms.vstring(['autoEncoder']*3)
-    
+process.hgcalConcentratorProducer.ProcessorParameters.threshold_silicon=-1.
+process.hgcalConcentratorProducer.ProcessorParameters.threshold_scintillator=-1.
+
+#switch to autoencoder
 process.hgcalConcentratorProducer.ProcessorParameters = process.autoEncoder_conc_proc.clone()
-#process.hgcalConcentratorProducer.ProcessorParameters.threshold_silicon=-1.
-#process.hgcalConcentratorProducer.ProcessorParameters.threshold_scintillator=-1.
-print process.hgcalConcentratorProducer.ProcessorParameters.Method
+
+####switch the precision
+# process.hgcalConcentratorProducer.ProcessorParameters.nBitsPerInput = cms.int32(-1) ## -1 to ignore precision, any other will truncate to that many bits
+# process.hgcalConcentratorProducer.ProcessorParameters.bitsPerLink = cms.vint32(process.autoEncoder_bitsPerOutputLink_fullPrecision)  #vector with number of bits to keep as a function of number of eLinks, -1 means keep full precision
+
+#### uncomment follow two lines to change the link allocation (options are signaldriven, pudriven, stcdriven, maxallocation) default is signaldriven if nothing is specified
+# from L1Trigger.L1THGCal.customTriggerGeometry import custom_geometry_decentralized_V11
+# process = custom_geometry_decentralized_V11(process, links='pudriven')
 
 process.hgcl1tpg_step = cms.Path(process.hgcalTriggerPrimitives)
 

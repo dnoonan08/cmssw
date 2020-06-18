@@ -6,8 +6,13 @@ def custom_geometry_decentralized_V11(process, links='signaldriven'):
         links_mapping = 'L1Trigger/L1THGCal/data/links_mapping_V11_decentralized_signaldriven_0.txt'
     elif links=='pudriven':
         links_mapping = 'L1Trigger/L1THGCal/data/links_mapping_V11_decentralized_march20_0.txt'
+    elif links=='stcdriven':
+        links_mapping = 'L1Trigger/L1THGCal/data/links_mapping_V11_decentralized_stc_0.txt'
+    elif links=='maxallocation':
+        links_mapping = 'L1Trigger/L1THGCal/data/links_mapping_V11_decentralized_max_allocation_march20_0.txt'
     else:
-        raise RuntimeError('Unknown links mapping "{}". Options are "signaldriven" or "pudriven".'.format(links))
+        raise RuntimeError('Unknown links mapping "{}". Options are "signaldriven", "pudriven", "stcdriven", or "maxallocation".'.format(links))
+    print(links_mapping)
     process.hgcalTriggerGeometryESProducer.TriggerGeometry.TriggerGeometryName = cms.string('HGCalTriggerGeometryV9Imp2')
     process.hgcalTriggerGeometryESProducer.TriggerGeometry.ScintillatorTriggerCellSize = cms.uint32(2)
     process.hgcalTriggerGeometryESProducer.TriggerGeometry.ScintillatorModuleSize = cms.uint32(6)

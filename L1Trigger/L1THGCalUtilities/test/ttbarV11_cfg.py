@@ -7,6 +7,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 options = VarParsing ('analysis')
 options.register("job", 1, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("Nevents", -1, VarParsing.multiplicity.singleton, VarParsing.varType.int)
+options.register("threshold", False, VarParsing.multiplicity.singleton,VarParsing.varType.bool)
 options.parseArguments()
 
 # import of standard configurations
@@ -35,8 +36,8 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('file:physprocttbar_x100_ttbar-1.0To-1.0_GSD_1.root'),
-                            # fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/cmst3/group/hgcal/CMG_studies/Production/ttbar_ttbar_v11_aged_unbiased_20191101/GSD/physprocttbar_x100_ttbar-1.0To-1.0_GSD_%i.root'%options.job),
+                            # fileNames = cms.untracked.vstring('file:physprocttbar_x100_ttbar-1.0To-1.0_GSD_1.root'),
+                            fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/cmst3/group/hgcal/CMG_studies/Production/ttbar_ttbar_v11_aged_unbiased_20191101/GSD/physprocttbar_x100_ttbar-1.0To-1.0_GSD_%i.root'%options.job),
        inputCommands=cms.untracked.vstring(
            'keep *',
            'drop l1tEMTFHit2016Extras_simEmtfDigis_CSC_HLT',
@@ -76,9 +77,6 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 # load HGCAL TPG simulation
 process.load('L1Trigger.L1THGCal.hgcalTriggerPrimitives_cff')
 
-process.hgcalConcentratorProducer.ProcessorParameters.threshold_silicon=-1.
-process.hgcalConcentratorProducer.ProcessorParameters.threshold_scintillator=-1.
-
 #switch to autoencoder
 process.hgcalConcentratorProducer.ProcessorParameters = process.autoEncoder_conc_proc.clone()
 
@@ -94,8 +92,13 @@ process.hgcalConcentratorProducer.ProcessorParameters.bitsPerLink = cms.vint32([
 # from L1Trigger.L1THGCal.customTriggerGeometry import custom_geometry_decentralized_V11
 # process = custom_geometry_decentralized_V11(process, links='pudriven')
 
-###WARNING : This line is needed to avoid the backend clustering from crashing, need to understand what's going on
-process.hgcalBackEndLayer2Producer.ProcessorParameters.C3d_parameters.histoMax_C3d_seeding_parameters.kROverZMin = cms.double(0.00)
+if options.threshold:
+    process.hgcalConcentratorProducer.ProcessorParameters = process.threshold_conc_proc.clone()
+    process.hgcalConcentratorProducer.ProcessorParameters.threshold_silicon=-1.
+    process.hgcalConcentratorProducer.ProcessorParameters.threshold_scintillator=-1.
+
+
+print "Using trigger link mapping from", process.hgcalTriggerGeometryESProducer.TriggerGeometry.L1TLinksMapping
 
 process.hgcl1tpg_step = cms.Path(process.hgcalTriggerPrimitives)
 

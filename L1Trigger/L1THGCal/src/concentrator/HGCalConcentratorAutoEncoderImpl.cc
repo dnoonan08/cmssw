@@ -61,7 +61,7 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
 
   double modSum = 0;
 
-  bool printWafer = false; //temp, to print out only one
+  // bool printWafer = false; //temp, to print out only one
 
   int bitsPerOutput = outputBitsPerLink_.at(nLinks);
 
@@ -79,12 +79,12 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
 
     modSum += trigCell.mipPt();
 
-    //print out vlaues from single module
-    if (id.subdet()==1 && triggerTools_.layerWithOffset(trigCell.detId())==7 && id.zside()==1){
-      if (id.waferU()==3 && id.waferV()==3){
-        printWafer=true;
-      }
-    }
+    // //print out vlaues from single module
+    // if (id.subdet()==1 && triggerTools_.layerWithOffset(trigCell.detId())==7 && id.zside()==1){
+    //   if (id.waferU()==3 && id.waferV()==3){
+    //     printWafer=true;
+    //   }
+    // }
   }
 
   if (modSum>0){
@@ -111,32 +111,32 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
     *d = ae_inputArray[i];
   }
 
-  if (printWafer){
-    std::cout << "session.run" << std::endl;
-  }
+  // if (printWafer){
+  //   std::cout << "session.run" << std::endl;
+  // }
 
 
   std::vector<tensorflow::Tensor> encoder_outputs;
   tensorflow::run(session_encoder_, { { "input_1", encoder_input } }, { "encoder/encoded_vector/Relu" }, &encoder_outputs);
 
 
-  if (printWafer){
-    cout << "Encoder Inputs" << endl;
-    std::cout << " -> " << encoder_input.DebugString() << endl;
-    d = encoder_input.flat<float>().data();
-    for (int i = 0; i < encoder_input.NumElements(); i++, d++){
-      cout << setprecision (12) <<*d << ",";
-    }
-    cout << endl << endl;
+  // if (printWafer){
+  //   cout << "Encoder Inputs" << endl;
+  //   std::cout << " -> " << encoder_input.DebugString() << endl;
+  //   d = encoder_input.flat<float>().data();
+  //   for (int i = 0; i < encoder_input.NumElements(); i++, d++){
+  //     cout << setprecision (12) <<*d << ",";
+  //   }
+  //   cout << endl << endl;
 
-    cout << "Encoder Outputs" << endl;
-    std::cout << " -> " << encoder_outputs[0].DebugString() << endl;
-    d = encoder_outputs[0].flat<float>().data();
-    for (int i = 0; i < encoder_outputs[0].NumElements(); i++, d++){
-      cout << setprecision (12) <<*d << ",";
-    }
-    cout << endl << endl;
-  }
+  //   cout << "Encoder Outputs" << endl;
+  //   std::cout << " -> " << encoder_outputs[0].DebugString() << endl;
+  //   d = encoder_outputs[0].flat<float>().data();
+  //   for (int i = 0; i < encoder_outputs[0].NumElements(); i++, d++){
+  //     cout << setprecision (12) <<*d << ",";
+  //   }
+  //   cout << endl << endl;
+  // }
 
 
 
@@ -168,23 +168,23 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
 
   double ae_outputArray[48];
 
-  if (printWafer){
-    cout << "Decoder Inputs" << endl;
-    std::cout << " -> " << encoder_input.DebugString() << endl;
-    d = encoder_input.flat<float>().data();
-    for (int i = 0; i < encoder_input.NumElements(); i++, d++){
-      cout << setprecision (12) <<*d << ",";
-    }
-    cout << endl << endl;
+  // if (printWafer){
+  //   cout << "Decoder Inputs" << endl;
+  //   std::cout << " -> " << decoder_input.DebugString() << endl;
+  //   d = decoder_input.flat<float>().data();
+  //   for (int i = 0; i < decoder_input.NumElements(); i++, d++){
+  //     cout << setprecision (12) <<*d << ",";
+  //   }
+  //   cout << endl << endl;
 
-    cout << "Decoder Outputs" << endl;
-    std::cout << " -> " << decoder_outputs[0].DebugString() << endl;
-    d = decoder_outputs[0].flat<float>().data();
-    for (int i = 0; i < decoder_outputs[0].NumElements(); i++, d++){
-      cout << setprecision (12) <<*d << ",";
-    }
-    cout << endl << endl;
-  }
+  //   cout << "Decoder Outputs" << endl;
+  //   std::cout << " -> " << decoder_outputs[0].DebugString() << endl;
+  //   d = decoder_outputs[0].flat<float>().data();
+  //   for (int i = 0; i < decoder_outputs[0].NumElements(); i++, d++){
+  //     cout << setprecision (12) <<*d << ",";
+  //   }
+  //   cout << endl << endl;
+  // }
 
   d = decoder_outputs[0].flat<float>().data();
   for (int i = 0; i < decoder_outputs[0].NumElements(); i++, d++){
@@ -210,6 +210,9 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
 
 	//find detID for this cell
 	unsigned detID = _id_waferBase + (cellU_ << HGCalTriggerDetId::kHGCalCellUOffset) + (cellV_ << HGCalTriggerDetId::kHGCalCellVOffset);
+	
+	// skip trigger cells that do not show up in geometry (due to partial modules
+	if (!triggerTools_.getTriggerGeometry()->validTriggerCell(detID)) continue;
 
 	double mipPt = ae_outputArray[i]*modSum;
 	double ADC = mipPt*mipPtToADC_conv;
@@ -232,11 +235,11 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
       }
     }
 
-    if (printWafer) {
-      cout << "------------" << endl;
-      cout << "nLinks: "<< nLinks << " inputBits: " << bitsPerInput_ << "  bitsPerOutput: " << bitsPerOutput << "  maxBitsPerOutput: " << maxBitsPerOutput_ << endl;
-      cout << "Encoded layer values" << endl;
-    }
+    // if (printWafer) {
+    //   cout << "------------" << endl;
+    //   cout << "nLinks: "<< nLinks << " inputBits: " << bitsPerInput_ << "  bitsPerOutput: " << bitsPerOutput << "  maxBitsPerOutput: " << maxBitsPerOutput_ << endl;
+    //   cout << "Encoded layer values" << endl;
+    // }
     // load encoded layer data into a dummy trigger cell object, 
     // this is a convenient way to store module information, and pass to ntuplizer
     for (int i=0; i<16; i++){
@@ -244,22 +247,22 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
       encodedLayerData.setIndex(i);
       ae_encodedLayer_Output.push_back(encodedLayerData);
 
-      if (printWafer) {
-	  cout << ae_encodedLayer[i] << "(" << encodedLayerData.hwPt()<<"), ";
-      }
+      // if (printWafer) {
+      // 	  cout << ae_encodedLayer[i] << "(" << encodedLayerData.hwPt()<<"), ";
+      // }
     }
-    if (printWafer) {
-	cout << endl;
-    }
+    // if (printWafer) {
+    // 	cout << endl;
+    // }
   }
 
   // temporary dump of single module data
-  if (printWafer) {
-    cout << "inputValues" << endl;
-    for (const auto& aeValue : ae_inputArray){
-      cout << aeValue << ", ";
-    }
-    cout << endl;
-  }
+  // if (printWafer) {
+  //   cout << "inputValues" << endl;
+  //   for (const auto& aeValue : ae_inputArray){
+  //     cout << aeValue << ", ";
+  //   }
+  //   cout << endl;
+  // }
 
 }

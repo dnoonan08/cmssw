@@ -35,7 +35,8 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/cmst3/group/hgcal/CMG_studies/Production/ttbar_ttbar_v11_aged_unbiased_20191101/GSD/physprocttbar_x100_ttbar-1.0To-1.0_GSD_%i.root'%options.job),
+                            fileNames = cms.untracked.vstring('file:physprocttbar_x100_ttbar-1.0To-1.0_GSD_1.root'),
+                            # fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/cmst3/group/hgcal/CMG_studies/Production/ttbar_ttbar_v11_aged_unbiased_20191101/GSD/physprocttbar_x100_ttbar-1.0To-1.0_GSD_%i.root'%options.job),
        inputCommands=cms.untracked.vstring(
            'keep *',
            'drop l1tEMTFHit2016Extras_simEmtfDigis_CSC_HLT',
@@ -81,13 +82,20 @@ process.hgcalConcentratorProducer.ProcessorParameters.threshold_scintillator=-1.
 #switch to autoencoder
 process.hgcalConcentratorProducer.ProcessorParameters = process.autoEncoder_conc_proc.clone()
 
+# to switch training files
+# process.hgcalConcentratorProducer.ProcessorParameters.encoderModelFile = cms.FileInPath('L1Trigger/L1THGCal/data/encoder_constantgraph.pb')
+# process.hgcalConcentratorProducer.ProcessorParameters.decoderModelFile = cms.FileInPath('L1Trigger/L1THGCal/data/decoder_constantgraph.pb')
+
 ####switch the precision
-# process.hgcalConcentratorProducer.ProcessorParameters.nBitsPerInput = cms.int32(-1) ## -1 to ignore precision, any other will truncate to that many bits
-# process.hgcalConcentratorProducer.ProcessorParameters.bitsPerLink = cms.vint32(process.autoEncoder_bitsPerOutputLink_fullPrecision)  #vector with number of bits to keep as a function of number of eLinks, -1 means keep full precision
+process.hgcalConcentratorProducer.ProcessorParameters.nBitsPerInput = cms.int32(-1) ## -1 to ignore precision, any other will truncate to that many bits
+process.hgcalConcentratorProducer.ProcessorParameters.bitsPerLink = cms.vint32([-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1])  #vector with number of bits to keep as a function of number of eLinks, -1 means keep full precision
 
 #### uncomment follow two lines to change the link allocation (options are signaldriven, pudriven, stcdriven, maxallocation) default is signaldriven if nothing is specified
 # from L1Trigger.L1THGCal.customTriggerGeometry import custom_geometry_decentralized_V11
 # process = custom_geometry_decentralized_V11(process, links='pudriven')
+
+###WARNING : This line is needed to avoid the backend clustering from crashing, need to understand what's going on
+process.hgcalBackEndLayer2Producer.ProcessorParameters.C3d_parameters.histoMax_C3d_seeding_parameters.kROverZMin = cms.double(0.00)
 
 process.hgcl1tpg_step = cms.Path(process.hgcalTriggerPrimitives)
 

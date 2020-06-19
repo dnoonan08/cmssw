@@ -150,19 +150,19 @@ autoencoded_triggerCellRemap_v11 = [47, 44, 41, 38, -1, -1, -1, -1,
                                     -1, -1, 43, 34,  3, 15, 27, 39,
                                     -1, -1, -1, 46,  0, 12, 24, 36]
 
-autoEncoder_bitsPerOutputLink = [0, 1, 3, 5, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
-autoEncoder_bitsPerOutputLink_always9 = [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
-autoEncoder_bitsPerOutputLink_fullPrecision = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+autoEncoder_bitsPerOutputLink = cms.vint32([0, 1, 3, 5, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9])
 
 autoEncoder_conc_proc = cms.PSet(ProcessorName  = cms.string('HGCalConcentratorProcessorSelection'),
                                  Method = cms.vstring(['autoEncoder']*3),
                                  cellRemap = cms.vint32(autoencoded_triggerCellRemap_v11),
                                  nBitsPerInput = cms.int32(8),
                                  maxBitsPerOutput = cms.int32(9),
-                                 bitsPerLink = cms.vint32(autoEncoder_bitsPerOutputLink),
+                                 bitsPerLink = autoEncoder_bitsPerOutputLink,
                                  coarsenTriggerCells = cms.vuint32(0,0,0),
                                  fixedDataSizePerHGCROC = cms.bool(False),
                                  ctcSize = cms.vuint32(CTC_SIZE),
+                                 encoderModelFile = cms.FileInPath('L1Trigger/L1THGCal/data/encoder_constantgraph.pb'),
+                                 decoderModelFile = cms.FileInPath('L1Trigger/L1THGCal/data/decoder_constantgraph.pb'),
 )
 
 

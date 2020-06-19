@@ -9,6 +9,8 @@
 
 #include "L1Trigger/L1THGCal/interface/HGCalTriggerGeometryBase.h"
 
+#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
+
 class HGCalConcentratorAutoEncoderImpl {
 public:
   HGCalConcentratorAutoEncoderImpl(const edm::ParameterSet& conf);
@@ -25,6 +27,14 @@ private:
   int bitsPerInput_;
   int maxBitsPerOutput_;
   std::vector<int> outputBitsPerLink_;
+
+  edm::FileInPath graphPath_encoder_;
+  tensorflow::GraphDef* graphDef_encoder_;
+  tensorflow::Session* session_encoder_;
+
+  edm::FileInPath graphPath_decoder_;
+  tensorflow::GraphDef* graphDef_decoder_;
+  tensorflow::Session* session_decoder_;
 
   int ae_outputCellU_[48];
   int ae_outputCellV_[48];

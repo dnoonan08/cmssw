@@ -29,10 +29,14 @@ private:
   std::vector<int> outputBitsPerLink_;
 
   edm::FileInPath graphPath_encoder_;
+  string inputTensorName_encoder_;
+  string outputTensorName_encoder_;
   tensorflow::GraphDef* graphDef_encoder_;
   tensorflow::Session* session_encoder_;
 
   edm::FileInPath graphPath_decoder_;
+  string inputTensorName_decoder_;
+  string outputTensorName_decoder_;
   tensorflow::GraphDef* graphDef_decoder_;
   tensorflow::Session* session_decoder_;
 

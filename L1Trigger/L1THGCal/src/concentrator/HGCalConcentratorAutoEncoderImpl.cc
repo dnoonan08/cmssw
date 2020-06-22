@@ -12,9 +12,13 @@ HGCalConcentratorAutoEncoderImpl::HGCalConcentratorAutoEncoderImpl(const edm::Pa
     , maxBitsPerOutput_(conf.getParameter<int>("maxBitsPerOutput"))
     , outputBitsPerLink_(conf.getParameter<std::vector<int>>("bitsPerLink"))
     , graphPath_encoder_(conf.getParameter<edm::FileInPath>("encoderModelFile"))
+    , inputTensorName_encoder_(conf.getParameter<std::string>("encoderInputTensorName"))
+    , outputTensorName_encoder_(conf.getParameter<std::string>("encoderOutputTensorName"))
     , graphDef_encoder_(nullptr)
     , session_encoder_(nullptr) 
     , graphPath_decoder_(conf.getParameter<edm::FileInPath>("decoderModelFile"))
+    , inputTensorName_decoder_(conf.getParameter<std::string>("decoderInputTensorName"))
+    , outputTensorName_decoder_(conf.getParameter<std::string>("decoderOutputTensorName"))
     , graphDef_decoder_(nullptr)
     , session_decoder_(nullptr) 
 {
@@ -117,7 +121,7 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
 
 
   std::vector<tensorflow::Tensor> encoder_outputs;
-  tensorflow::run(session_encoder_, { { "input_1", encoder_input } }, { "encoder/encoded_vector/Relu" }, &encoder_outputs);
+  tensorflow::run(session_encoder_, { { inputTensorName_encoder_, encoder_input } }, { outputTensorName_encoder_ }, &encoder_outputs);
 
 
   // if (printWafer){
@@ -164,7 +168,7 @@ void HGCalConcentratorAutoEncoderImpl::select(unsigned nLinks,
 
 
   std::vector<tensorflow::Tensor> decoder_outputs;
-  tensorflow::run(session_decoder_, { { "decoder_input", decoder_input } }, { "decoder_output/Sigmoid" }, &decoder_outputs);
+  tensorflow::run(session_decoder_, { { inputTensorName_decoder_, decoder_input } }, { outputTensorName_decoder_ }, &decoder_outputs);
 
   double ae_outputArray[48];
 

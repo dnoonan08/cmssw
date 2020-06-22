@@ -162,7 +162,11 @@ autoEncoder_conc_proc = cms.PSet(ProcessorName  = cms.string('HGCalConcentratorP
                                  fixedDataSizePerHGCROC = cms.bool(False),
                                  ctcSize = cms.vuint32(CTC_SIZE),
                                  encoderModelFile = cms.FileInPath('L1Trigger/L1THGCal/data/encoder_constantgraph.pb'),
+                                 encoderInputTensorName = cms.string('input_1'),
+                                 encoderOutputTensorName = cms.string('encoder/encoded_vector/Relu'),
                                  decoderModelFile = cms.FileInPath('L1Trigger/L1THGCal/data/decoder_constantgraph.pb'),
+                                 decoderInputTensorName = cms.string('decoder_input'),
+                                 decoderOutputTensorName = cms.string('decoder_output/Sigmoid'),
 )
 
 

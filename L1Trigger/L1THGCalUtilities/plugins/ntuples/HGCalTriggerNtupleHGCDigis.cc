@@ -42,8 +42,12 @@ private:
   std::vector<float> hgcdigi_eta_;
   std::vector<float> hgcdigi_phi_;
   std::vector<float> hgcdigi_z_;
-  std::vector<std::vector<uint32_t>> hgcdigi_data_;
-  std::vector<std::vector<int>> hgcdigi_isadc_;
+  std::vector<uint32_t> hgcdigi_data_;
+  std::vector<int> hgcdigi_isadc_;
+  std::vector<uint32_t> hgcdigi_dataBXm1_;
+  std::vector<int> hgcdigi_isadcBXm1_;
+  // std::vector<std::vector<uint32_t>> hgcdigi_data_;
+  // std::vector<std::vector<int>> hgcdigi_isadc_;
   std::vector<float> hgcdigi_simenergy_;
   // V8 detid scheme
   std::vector<int> hgcdigi_wafer_;
@@ -64,8 +68,12 @@ private:
   std::vector<float> bhdigi_eta_;
   std::vector<float> bhdigi_phi_;
   std::vector<float> bhdigi_z_;
-  std::vector<std::vector<uint32_t>> bhdigi_data_;
-  std::vector<std::vector<int>> bhdigi_isadc_;
+  std::vector<uint32_t> bhdigi_data_;
+  std::vector<int> bhdigi_isadc_;
+  std::vector<uint32_t> bhdigi_dataBXm1_;
+  std::vector<int> bhdigi_isadcBXm1_;
+  // std::vector<std::vector<uint32_t>> bhdigi_data_;
+  // std::vector<std::vector<int>> bhdigi_isadc_;
   std::vector<float> bhdigi_simenergy_;
 
   edm::ESHandle<HGCalTriggerGeometryBase> triggerGeometry_;
@@ -99,6 +107,8 @@ void HGCalTriggerNtupleHGCDigis::initialize(TTree& tree,
   tree.Branch("hgcdigi_z", &hgcdigi_z_);
   tree.Branch("hgcdigi_data", &hgcdigi_data_);
   tree.Branch("hgcdigi_isadc", &hgcdigi_isadc_);
+  tree.Branch("hgcdigi_dataBXm1", &hgcdigi_dataBXm1_);
+  tree.Branch("hgcdigi_isadcBXm1", &hgcdigi_isadcBXm1_);
   // V9 detid scheme
   tree.Branch("hgcdigi_waferu", &hgcdigi_waferu_);
   tree.Branch("hgcdigi_waferv", &hgcdigi_waferv_);
@@ -122,6 +132,8 @@ void HGCalTriggerNtupleHGCDigis::initialize(TTree& tree,
   tree.Branch("bhdigi_z", &bhdigi_z_);
   tree.Branch("bhdigi_data", &bhdigi_data_);
   tree.Branch("bhdigi_isadc", &bhdigi_isadc_);
+  tree.Branch("bhdigi_dataBXm1", &bhdigi_dataBXm1_);
+  tree.Branch("bhdigi_isadcBXm1", &bhdigi_isadcBXm1_);
   if (is_Simhit_comp_)
     tree.Branch("bhdigi_simenergy", &bhdigi_simenergy_);
 }
@@ -195,14 +207,18 @@ void HGCalTriggerNtupleHGCDigis::fill(const edm::Event& e, const edm::EventSetup
     hgcdigi_eta_.emplace_back(cellpos.eta());
     hgcdigi_phi_.emplace_back(cellpos.phi());
     hgcdigi_z_.emplace_back(cellpos.z());
-    vector<uint32_t> hgcdigi_data(digi.size());
-    vector<int> hgcdigi_isadc(digi.size());
-    for (int i = 0; i < digi.size(); i++) {
-      hgcdigi_data[i] = digi[i].data();
-      hgcdigi_isadc[i] = !digi[i].mode();
-    }
-    hgcdigi_data_.emplace_back(hgcdigi_data);
-    hgcdigi_isadc_.emplace_back(hgcdigi_isadc);
+    // vector<uint32_t> hgcdigi_data(digi.size());
+    // vector<int> hgcdigi_isadc(digi.size());
+    // for (int i = 0; i < digi.size(); i++) {
+    //   hgcdigi_data[i] = digi[i].data();
+    //   hgcdigi_isadc[i] = !digi[i].mode();
+    // }
+    // hgcdigi_data_.emplace_back(hgcdigi_data);
+    // hgcdigi_isadc_.emplace_back(hgcdigi_isadc);
+    hgcdigi_data_.emplace_back(digi[2].data());
+    hgcdigi_isadc_.emplace_back(!digi[2].mode());
+    hgcdigi_dataBXm1_.emplace_back(digi[1].data());
+    hgcdigi_isadcBXm1_.emplace_back(!digi[1].mode());
     if (triggerGeometry_->isV9Geometry()) {
       const HGCSiliconDetId idv9(digi.id());
       hgcdigi_waferu_.emplace_back(idv9.waferU());
@@ -235,14 +251,18 @@ void HGCalTriggerNtupleHGCDigis::fill(const edm::Event& e, const edm::EventSetup
     hgcdigi_eta_.emplace_back(cellpos.eta());
     hgcdigi_phi_.emplace_back(cellpos.phi());
     hgcdigi_z_.emplace_back(cellpos.z());
-    vector<uint32_t> hgcdigi_data(digi.size());
-    vector<int> hgcdigi_isadc(digi.size());
-    for (int i = 0; i < digi.size(); i++) {
-      hgcdigi_data[i] = digi[i].data();
-      hgcdigi_isadc[i] = !digi[i].mode();
-    }
-    hgcdigi_data_.emplace_back(hgcdigi_data);
-    hgcdigi_isadc_.emplace_back(hgcdigi_isadc);
+    // vector<uint32_t> hgcdigi_data(digi.size());
+    // vector<int> hgcdigi_isadc(digi.size());
+    // for (int i = 0; i < digi.size(); i++) {
+    //   hgcdigi_data[i] = digi[i].data();
+    //   hgcdigi_isadc[i] = !digi[i].mode();
+    // }
+    // hgcdigi_data_.emplace_back(hgcdigi_data);
+    // hgcdigi_isadc_.emplace_back(hgcdigi_isadc);
+    hgcdigi_data_.emplace_back(digi[2].data());
+    hgcdigi_isadc_.emplace_back(!digi[2].mode());
+    hgcdigi_dataBXm1_.emplace_back(digi[1].data());
+    hgcdigi_isadcBXm1_.emplace_back(!digi[1].mode());
     if (triggerGeometry_->isV9Geometry()) {
       const HGCSiliconDetId idv9(digi.id());
       hgcdigi_waferu_.emplace_back(idv9.waferU());
@@ -276,14 +296,18 @@ void HGCalTriggerNtupleHGCDigis::fill(const edm::Event& e, const edm::EventSetup
     bhdigi_eta_.emplace_back(cellpos.eta());
     bhdigi_phi_.emplace_back(cellpos.phi());
     bhdigi_z_.emplace_back(cellpos.z());
-    vector<uint32_t> bhdigi_data(digi.size());
-    vector<int> bhdigi_isadc(digi.size());
-    for (int i = 0; i < digi.size(); i++) {
-      bhdigi_data[i] = digi[i].data();
-      bhdigi_isadc[i] = !digi[i].mode();
-    }
-    bhdigi_data_.emplace_back(bhdigi_data);
-    bhdigi_isadc_.emplace_back(bhdigi_isadc);
+    // vector<uint32_t> bhdigi_data(digi.size());
+    // vector<int> bhdigi_isadc(digi.size());
+    // for (int i = 0; i < digi.size(); i++) {
+    //   bhdigi_data[i] = digi[i].data();
+    //   bhdigi_isadc[i] = !digi[i].mode();
+    // }
+    // bhdigi_data_.emplace_back(bhdigi_data);
+    // bhdigi_isadc_.emplace_back(bhdigi_isadc);
+    bhdigi_data_.emplace_back(digi[2].data());
+    bhdigi_isadc_.emplace_back(!digi[2].mode());
+    bhdigi_dataBXm1_.emplace_back(digi[1].data());
+    bhdigi_isadcBXm1_.emplace_back(!digi[1].mode());
     if (triggerGeometry_->isV9Geometry()) {
       const HGCScintillatorDetId idv9(digi.id());
       bhdigi_ieta_.emplace_back(idv9.ietaAbs());
@@ -363,6 +387,8 @@ void HGCalTriggerNtupleHGCDigis::clear() {
   hgcdigi_z_.clear();
   hgcdigi_data_.clear();
   hgcdigi_isadc_.clear();
+  hgcdigi_dataBXm1_.clear();
+  hgcdigi_isadcBXm1_.clear();
   if (is_Simhit_comp_)
     hgcdigi_simenergy_.clear();
 
@@ -378,6 +404,8 @@ void HGCalTriggerNtupleHGCDigis::clear() {
   bhdigi_z_.clear();
   bhdigi_data_.clear();
   bhdigi_isadc_.clear();
+  bhdigi_dataBXm1_.clear();
+  bhdigi_isadcBXm1_.clear();
   if (is_Simhit_comp_)
     bhdigi_simenergy_.clear();
 }

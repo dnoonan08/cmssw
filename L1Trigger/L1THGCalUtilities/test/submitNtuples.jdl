@@ -1,0 +1,169 @@
+universe = vanilla
+Executable = makeNtuples.sh
+
+should_transfer_files = YES
+WhenToTransferOutput  = ON_EXIT
+notification = never
+
+Transfer_Input_Files = ttbarV11_cfg.py
+
+
+Output = condor/ntuples_$(cluster)_$(process).stdout
+Error  = condor/ntuples_$(cluster)_$(process).stderr
+Log    = condor/ntuples_$(cluster)_$(process).condor
+
++RequestMemory=4000
+
+
+
+########
+###EXAMPLES
+########
+## Rerun only jobs 1, 10, and 12
+# Arguments = "maxEvents=50 job=$(njob) pu=$(pu) pdgid=1 pt=50"
+# Queue njob in 1,10,12
+#
+## Run 20 jobs, starting the numbering at 50
+# X=$(step)+50
+# Arguments = "maxEvents=50 job=$INT(X) pu=$(pu) what=ttbar"
+# Queue 20
+########
+########
+
+Arguments = "job=$(Item)"
+Queue 1 in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 27, 28, 29, 30, 35, 36, 37, 38, 39, 43, 45, 46, 47, 48, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 84, 85, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100)
+
+# X=$(step)
+# Arguments = "maxEvents=200 job=$INT(X) pu=0 pdgid=12 pt=20"
+# Queue 20
+
+
+# X=$(step)+100
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) what=vbf_hmm"
+# Queue 200
+
+# X=$(step)+20
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) what=minbias"
+# Queue 20
+
+# X=$(step)+20
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=1 pt=50"
+# Queue 20
+
+# X=$(step)+20
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=21 pt=50"
+# Queue 20
+
+# X=$(step)+20
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=1 pt=100"
+# Queue 20
+
+# X=$(step)+20
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=21 pt=100"
+# Queue 20
+
+
+
+
+# X=$(step)+20
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) what=vbf_hmm"
+# Queue 30
+
+# X=$(step)+10
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) what=minbias"
+# Queue 10
+
+# X=$(step)+10
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=1 pt=50"
+# Queue 10
+
+# X=$(step)+10
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=21 pt=50"
+# Queue 10
+
+# X=$(step)+10
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=1 pt=100"
+# Queue 10
+
+# X=$(step)+10
+# Arguments = "maxEvents=$(maxEvents) job=$INT(X) pu=$(pu) pdgid=21 pt=100"
+# Queue 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Arguments = "maxEvents=100 job=$(step) pu=$(pu) pdgid=11 pt=100"
+# Queue 10
+
+# Arguments = "maxEvents=100 job=$(step) pu=$(pu) pdgid=21 pt=100"
+# Queue 10
+
+# Arguments = "maxEvents=100 job=$(step) pu=$(pu) pdgid=1 pt=100"
+# Queue 10
+
+
+
+# Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=11 pt=50"
+# Queue 20
+
+# Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=11 pt=20"
+# Queue 20
+
+# Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=11 pt=200"
+# Queue 20
+
+
+# # Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=1 pt=50"
+# # Queue 20
+
+# # Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=1 pt=20"
+# # Queue 20
+
+# # Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=1 pt=200"
+# # Queue 20
+
+
+# # Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=21 pt=50"
+# # Queue 20
+
+# # Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=21 pt=20"
+# # Queue 20
+
+# # Arguments = "maxEvents=50 job=$(step) pu=$(pu) pdgid=21 pt=200"
+# # Queue 20
+
+
+# # Arguments = "maxEvents=50 job=$(step) pu=$(pu) what=vbf_hmm"
+# # Queue 40
+
+
+
+
+
+
+
+# Arguments = "maxEvents=200 job=$(step) pu=0 pdgid=1 pt=100 eta=2.6605 phi=0.27"
+# Queue 10
+# Arguments = "maxEvents=200 job=$(step) pu=0 pdgid=1 pt=100 eta=1.6732 phi=0.91"
+# Queue 10
+# Arguments = "maxEvents=200 job=$(step) pu=0 pdgid=1 pt=100 eta=2.5450 phi=0.198"
+# Queue 10
+# Arguments = "maxEvents=200 job=$(step) pu=0 pdgid=1 pt=100 eta=1.6157 phi=0.075"
+# Queue 10

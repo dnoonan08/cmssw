@@ -42,6 +42,8 @@ ntuple_genjet = cms.PSet(
     GenJets = cms.InputTag('ak4GenJetsNoNu')
 )
 
+hgcdigi_list = ["hgcdigi_n","hgcdigi_id","hgcdigi_subdet","hgcdigi_zside","hgcdigi_layer","hgcdigi_wafertype","hgcdigi_eta","hgcdigi_phi","hgcdigi_z","hgcdigi_data","hgcdigi_isadc","hgcdigi_toa","hgcdigi_waferu","hgcdigi_waferv","hgcdigi_cellu","hgcdigi_cellv","hgcdigi_wafer","hgcdigi_cell","hgcdigi_simenergy"]
+bhdigi_list = ["bhdigi_n","bhdigi_id","bhdigi_subdet","bhdigi_zside","bhdigi_layer","bhdigi_ieta","bhdigi_iphi","bhdigi_eta","bhdigi_phi","bhdigi_z","bhdigi_data","bhdigi_isadc","bhdigi_toa","bhdigi_simenergy"]
 ntuple_digis = cms.PSet(
     NtupleName = cms.string('HGCalTriggerNtupleHGCDigis'),
     HGCDigisEE = cms.InputTag('simHGCalUnsuppressedDigis:EE'),
@@ -51,7 +53,8 @@ ntuple_digis = cms.PSet(
     fhSimHits = cms.InputTag('g4SimHits:HGCHitsHEfront'),
     bhSimHits = cms.InputTag('g4SimHits:HcalHits'),
     isSimhitComp = cms.bool(False),
-    digiBXselect = cms.vuint32(2)
+    digiBXselect = cms.vuint32(2),
+    digiBranches = cms.vstring(hgcdigi_list + bhdigi_list)
 )
 
 ntuple_triggercells = cms.PSet(

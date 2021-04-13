@@ -248,7 +248,11 @@ void HGCalTriggerNtupleHGCDigis::fill(const edm::Event& e, const edm::EventSetup
     for (unsigned int i = 0; i < digiBXselect_.size(); i++) {
       hgcdigi_data_[i].emplace_back(digi[digiBXselect_[i]].data());
       hgcdigi_isadc_[i].emplace_back(!digi[digiBXselect_[i]].mode());
-      hgcdigi_toa_[i].emplace_back(digi[digiBXselect_[i]].getToAValid());
+      if (digi[digiBXselect_[i]].getToAValid()){
+          hgcdigi_toa_[i].emplace_back(digi[digiBXselect_[i]].toa());
+      } else {
+          hgcdigi_toa_[i].emplace_back(-1);
+      }
     }
     if (triggerGeometry_->isV9Geometry()) {
       const HGCSiliconDetId idv9(digi.id());
@@ -285,7 +289,11 @@ void HGCalTriggerNtupleHGCDigis::fill(const edm::Event& e, const edm::EventSetup
     for (unsigned int i = 0; i < digiBXselect_.size(); i++) {
       hgcdigi_data_[i].emplace_back(digi[digiBXselect_[i]].data());
       hgcdigi_isadc_[i].emplace_back(!digi[digiBXselect_[i]].mode());
-      hgcdigi_toa_[i].emplace_back(digi[digiBXselect_[i]].getToAValid());
+      if (digi[digiBXselect_[i]].getToAValid()){
+          hgcdigi_toa_[i].emplace_back(digi[digiBXselect_[i]].toa());
+      } else{
+          hgcdigi_toa_[i].emplace_back(-1);
+      }
     }
     if (triggerGeometry_->isV9Geometry()) {
       const HGCSiliconDetId idv9(digi.id());
@@ -323,7 +331,11 @@ void HGCalTriggerNtupleHGCDigis::fill(const edm::Event& e, const edm::EventSetup
     for (unsigned int i = 0; i < digiBXselect_.size(); i++) {
       bhdigi_data_[i].emplace_back(digi[digiBXselect_[i]].data());
       bhdigi_isadc_[i].emplace_back(!digi[digiBXselect_[i]].mode());
-      bhdigi_toa_[i].emplace_back(digi[digiBXselect_[i]].getToAValid());
+      if (digi[digiBXselect_[i]].getToAValid()){
+          bhdigi_toa_[i].emplace_back(digi[digiBXselect_[i]].toa());
+      } else {
+          bhdigi_toa_[i].emplace_back(-1);
+      }
     }
     if (triggerGeometry_->isV9Geometry()) {
       const HGCScintillatorDetId idv9(digi.id());
